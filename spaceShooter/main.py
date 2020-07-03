@@ -2,12 +2,14 @@
 
 import arcade
 import random
+from time import sleep
 
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
 SCREEN_TITLE = "Arcade space shooter"
 SCALING = 1.5
 IMG_PATH = "spaceShooter/res/img/"
+SOUND_PATH = "spaceShooter/res/sound/"
 
 SPEED_PLAYER = 5
 SPEED_CLOUD_MAX = 3
@@ -40,6 +42,7 @@ class SpaceShooter(arcade.Window):
 		self.clouds_list = arcade.SpriteList()
 		self.all_sprites = arcade.SpriteList()
 	
+
 	def setup(self):
 		arcade.set_background_color(arcade.color.SKY_BLUE)
 
@@ -50,6 +53,17 @@ class SpaceShooter(arcade.Window):
 
 		arcade.schedule(self.add_enemy, INTERVAL_ENEMIES)
 		arcade.schedule(self.add_cloud, INTERVAL_CLOUDS)
+
+		# Sound source: http://ccmixter.org/files/Apoxode/59262
+		# License: https://creativecommons.org/licenses/by/3.0/
+		self.background_music = arcade.load_sound(
+			SOUND_PATH + "Apoxode_-_Electric_1.wav"
+		)
+		self.collision_sound = arcade.load_sound(SOUND_PATH + "Collision.wav")
+		self.move_up_sound = arcade.load_sound(SOUND_PATH + "Rising_putter.wav")
+		self.move_down_sound = arcade.load_sound(SOUND_PATH + "Falling_putter.wav")
+
+		arcade.play_sound(self.background_music)
 
 
 	def add_enemy(self, delta_time: float):
@@ -82,10 +96,16 @@ class SpaceShooter(arcade.Window):
 		self.clouds_list.append(cloud)
 		self.all_sprites.append(cloud)
 	
+
 	def on_update(self, delta_time: float):
 		if self.paused:
 			return
 		
+		if self.player.collides_with_list(self.enemies_list):
+			arcade.play_sound(self.collision_sound)
+			sleep(1)
+			arcade.close_window()
+
 		self.all_sprites.update()
 
 		if self.player.top > self.height:
@@ -97,10 +117,12 @@ class SpaceShooter(arcade.Window):
 		if self.player.left < 0:
 			self.player.left = 0
 	
+
 	def on_draw(self):
 		arcade.start_render()
 		self.all_sprites.draw()
 	
+
 	def on_key_press(self, symbol, modifiers):
 		if symbol == arcade.key.Q:
 			arcade.close_window()
@@ -110,13 +132,19 @@ class SpaceShooter(arcade.Window):
 		
 		if symbol == arcade.key.W or symbol == arcade.key.I or symbol == arcade.key.UP:
 			self.player.change_y = SPEED_PLAYER
+			arcade.play_sound(self.move_up_sound)
+			
 		if symbol == arcade.key.S or symbol == arcade.key.K or symbol == arcade.key.DOWN:
 			self.player.change_y = SPEED_PLAYER * -1
+			arcade.play_sound(self.move_down_sound)
+
 		if symbol == arcade.key.A or symbol == arcade.key.J or symbol == arcade.key.LEFT:
 			self.player.change_x = SPEED_PLAYER * -1
+			
 		if symbol == arcade.key.D or symbol == arcade.key.L or symbol == arcade.key.RIGHT:
 			self.player.change_x = SPEED_PLAYER
 	
+
 	def on_key_release(self, symbol, modifiers):
 		if (
 			symbol == arcade.key.W or
