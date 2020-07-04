@@ -12,13 +12,11 @@ class Casilla():
 		abierta: inida si un actor se puede mover
 	"""
 
-	def __init__(self, pos, nivel=0, abierta=True):
-		"""
-		Params
-			pos: tupla de int (x, y)
-		"""
+	def __init__(self, x, y, nivel=0, abierta=True):
 		self.nivel = nivel
 		self.abierta = abierta
+		self.x = x
+		self.y = y
 
 
 class Actor():
@@ -45,7 +43,7 @@ class Tablero():
 		self.nfils = nfils
 		self.wrap = wrap
 		# Generar las casillas
-		self.world = [[Casilla((x, y)) for y in range(nfils)] for x in range(ncols)]
+		self.world = [[Casilla(x, y) for y in range(nfils)] for x in range(ncols)]
 
 		# Hacer una fila de casillas de nivel 1
 		for x in range(ncols):
