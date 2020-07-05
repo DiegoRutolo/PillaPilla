@@ -21,7 +21,7 @@ class Casilla():
 
 	def __init__(self, x, y, nivel=0, transitable=True):
 		self.nivel = nivel
-		self.abierta = transitable
+		self.transitable = transitable
 		self.x = x
 		self.y = y
 
@@ -77,6 +77,8 @@ class Actor():
 				else:
 					return
 		if dir == Direccion.SUR:
+			if not self.world.wrap and self.y - n_casillas < 0:
+				return
 			try:
 				obj = self.world.casillas[self.x][self.y - n_casillas]
 			except:
@@ -93,6 +95,8 @@ class Actor():
 				else:
 					return
 		if dir == Direccion.OESTE:
+			if not self.world.wrap and self.x - n_casillas < 0:
+				return
 			try:
 				obj = self.world.casillas[self.x - n_casillas][self.y]
 			except:

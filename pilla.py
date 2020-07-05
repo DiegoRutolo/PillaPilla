@@ -27,6 +27,22 @@ COLOR_J1 = arcade.csscolor.YELLOW
 COLOR_J2 = arcade.csscolor.PURPLE
 #endregion
 
+#region Funciones auxiliares
+def get_coords_from_pos(x, y):
+	return ((TCEL / 2) + (TCEL * x), (TCEL / 2) + (TCEL * y))
+#endregion
+
+class Jugador(arcade.Sprite, componentes.Actor):
+	def __init__(self, world, x0=0, y0=0):
+		componentes.Actor.__init__(self, world, x0, y0)
+		arcade.Sprite.__init__(self, PATH_IMG_J1)
+
+		self.center_x, self.center_y = get_coords_from_pos(self.x, self.y)
+	
+	def mover(self, direc: componentes.Direccion):
+		componentes.Actor.mover(self, direc)
+		self.center_x, self.center_y = get_coords_from_pos(self.x, self.y)
+
 class Pilla(arcade.Window):
 	
 	def __init__(self):
@@ -36,9 +52,9 @@ class Pilla(arcade.Window):
 		self.sprites_tablero = None
 		self.sprites_actores = None
 		self.tablero = None
+		self.color_perseguidor = None
 		self.j1 = None
 		self.j2 = None
-		self.color_perseguidor = None
 
 	def setup(self):
 		#region Generar terreno
@@ -61,9 +77,14 @@ class Pilla(arcade.Window):
 		
 		#endregion
 
-		#region Colocar jugadores
+		#region Colocar actores
+		self.sprites_actores = arcade.SpriteList()
 
-		# Crear sprites actores
+		self.j1 = Jugador(self.tablero)
+		self.sprites_actores.append(self.j1)
+
+		self.j2 = Jugador(self.tablero, N_COLS-1, 0)
+		self.sprites_actores.append(self.j2)
 		
 		#endregion
 
@@ -80,10 +101,7 @@ class Pilla(arcade.Window):
 		indicador.draw()
 
 		self.sprites_tablero.draw()
-		#self.sprites_actores.draw()
-	
-	def get_coords_from_pos(self, x, y):
-		return ((TCEL / 2) + (TCEL * x), (TCEL / 2) + (TCEL * y))
+		self.sprites_actores.draw()
 	
 	def on_key_press(self, symbol: int, modifiers: int):
 		if symbol == arcade.key.C:
@@ -91,6 +109,26 @@ class Pilla(arcade.Window):
 				self.color_perseguidor = COLOR_J2
 			else:
 				self.color_perseguidor = COLOR_J1
+		
+		# Movimiento J1
+		if symbol == arcade.key.W:
+			self.j1.mover(componentes.Direccion.NORTE)
+		if symbol == arcade.key.S:
+			self.j1.mover(componentes.Direccion.SUR)
+		if symbol == arcade.key.D:
+			self.j1.mover(componentes.Direccion.ESTE)
+		if symbol == arcade.key.A:
+			self.j1.mover(componentes.Direccion.OESTE)
+		
+		# Movimiento J2
+		if symbol == arcade.key.UP:
+			self.j2.mover(componentes.Direccion.NORTE)
+		if symbol == arcade.key.DOWN:
+			self.j2.mover(componentes.Direccion.SUR)
+		if symbol == arcade.key.RIGHT:
+			self.j2.mover(componentes.Direccion.ESTE)
+		if symbol == arcade.key.LEFT:
+			self.j2.mover(componentes.Direccion.OESTE)
 
 #end Pilla
 
