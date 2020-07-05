@@ -1,8 +1,14 @@
 import random
 import enum
+import noise
 
 #region Constantes
-DENSIDAD_ALTILLOS = 0.3
+DENSIDAD_ALTILLOS = -0.3
+SEED = random.randint(0, 2**32 - 1)
+#endregion
+
+#region Funciones
+
 #endregion
 
 class Direccion(enum.Enum):
@@ -48,7 +54,9 @@ class Tablero():
 		# Elevar algunas casillas
 		for x in range(ncols):
 			for y in range(nfils):
-				if random.random() < DENSIDAD_ALTILLOS:
+				ruido = noise.snoise2(x, y)
+				print(ruido)
+				if ruido < DENSIDAD_ALTILLOS:
 					self.casillas[x][y].nivel = 1
 
 

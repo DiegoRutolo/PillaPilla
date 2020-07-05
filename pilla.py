@@ -33,9 +33,9 @@ def get_coords_from_pos(x, y):
 #endregion
 
 class Jugador(arcade.Sprite, componentes.Actor):
-	def __init__(self, world, x0=0, y0=0):
+	def __init__(self, world, x0=0, y0=0, img=PATH_IMG_J1):
 		componentes.Actor.__init__(self, world, x0, y0)
-		arcade.Sprite.__init__(self, PATH_IMG_J1)
+		arcade.Sprite.__init__(self, img)
 
 		self.center_x, self.center_y = get_coords_from_pos(self.x, self.y)
 	
@@ -83,7 +83,7 @@ class Pilla(arcade.Window):
 		self.j1 = Jugador(self.tablero)
 		self.sprites_actores.append(self.j1)
 
-		self.j2 = Jugador(self.tablero, N_COLS-1, 0)
+		self.j2 = Jugador(self.tablero, N_COLS-1, 0, PATH_IMG_J2)
 		self.sprites_actores.append(self.j2)
 		
 		#endregion
